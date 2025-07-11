@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Tab</title>
+    <link rel="icon" type="image/png" href="icons/favicon.png" />
+    <style>
+      :root {
+        --bg-color: #121212;
+        --primary: #e0e0e0;
+        --accent: #00bcd4;
+        --card-bg: #1e1e1e;
+        --border-radius: 12px;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-color);
+        color: var(--primary);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        padding: 4rem 2rem 2rem;
+      }
+      .logo {
+        margin-bottom: 3rem;
+      }
+      .logo img {
+        width: 280px;
+      }
+      .search-container {
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 3.5rem;
+      }
+      .search-container input {
+        width: 100%;
+        padding: 18px 22px;
+        font-size: 18px;
+        border-radius: var(--border-radius);
+        border: none;
+        background: var(--card-bg);
+        color: var(--primary);
+      }
+      .shortcut-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 24px;
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 80px;
+      }
+      .shortcut {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+        padding: 12px 8px;
+        width: 100px; /* was 100px */
+        height: 100px; /* was 100px */
+      }
+      .shortcut img {
+        width: 36px;
+        height: 36px;
+        margin: 0 auto 6px auto;
+        object-fit: contain;
+        display: block;
+      }
+      .shortcut span {
+        font-size: 13px;
+        line-height: 1.2;
+        color: var(--primary);
+        margin: 0;
+      }
+      .shortcut:hover .shortcut-actions {
+        opacity: 1;
+      }
+      .shortcut-actions {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .menu {
+        cursor: pointer;
+        font-size: 18px;
+        background: var(--card-bg);
+        padding: 4px 8px;
+        border-radius: 6px;
+      }
+      .menu-dropdown {
+        display: none;
+        position: absolute;
+        top: 28px;
+        right: 0;
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        flex-direction: column;
+        z-index: 100;
+      }
+      .menu-dropdown button {
+        background: none;
+        border: none;
+        color: var(--primary);
+        padding: 10px 16px;
+        text-align: left;
+        width: 100%;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .menu-dropdown button:hover {
+        background: #2a2a2a;
+      }
+      .add-btn {
+        background: var(--accent);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 50%;
+        font-size: 24px;
+      }
+      .settings-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--card-bg);
+        border: none;
+        color: var(--primary);
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      }
+      .settings-btn:hover {
+        background: var(--accent);
+      }
+      .modal,
+      .settings-modal {
+        display: none;
+        flex-direction: column;
+        background: var(--card-bg);
+        padding: 24px;
+        border-radius: var(--border-radius);
+        position: fixed;
+        z-index: 100;
+        width: 320px;
+        gap: 12px;
+      }
+      .modal.show,
+      .settings-modal.show {
+        display: flex;
+      }
+      .modal {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .settings-modal {
+        bottom: 80px;
+        right: 20px;
+      }
+      .modal input,
+      .settings-modal input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #444;
+        background: #1c1c1c;
+        color: var(--primary);
+      }
+      .modal button,
+      .settings-modal button {
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .modal .save-btn {
+        background: var(--accent);
+        color: white;
+      }
+      .modal .cancel-btn {
+        background: #444;
+        color: white;
+      }
+      .modal label {
+        font-size: 14px;
+        color: var(--primary);
+        margin-bottom: 8px;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 12px;
+      }
+      .backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 90;
+      }
+      .backdrop.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo">
+      <img
+        src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
+        alt="Google Logo"
+      />
+    </div>
+    <form
+      class="search-container"
+      action="https://www.google.com/search"
+      method="GET"
+    >
+      <input
+        type="text"
+        name="q"
+        placeholder="Search Google or type a URL"
+        autocomplete="on"
+        autofocus
+      />
+    </form>
+    <div id="shortcutGrid" class="shortcut-grid"></div>
+    <div id="modal" class="modal">
+      <div class="form-group">
+        <label for="shortcutName">Shortcut Name</label>
+        <input id="shortcutName" placeholder="Shortcut name" />
+      </div>
+
+      <div class="form-group">
+        <label for="shortcutURL">URL</label>
+        <input id="shortcutURL" placeholder="https://example.com" />
+      </div>
+
+      <div class="form-group">
+        <label for="shortcutImage">Image URL (optional)</label>
+        <input id="shortcutImage" placeholder="Leave blank to auto-fetch" />
+      </div>
+
+      <button class="save-btn" id="saveShortcut">Save</button>
+      <button class="cancel-btn" id="cancel">Cancel</button>
+    </div>
+
+    <div id="settingsModal" class="settings-modal">
+      <label>Rows</label><input id="rows" type="number" min="1" value="2" />
+      <label>Columns</label><input id="cols" type="number" min="1" value="6" />
+      <button id="applySettings">Save</button>
+    </div>
+    <div id="backdrop" class="backdrop"></div>
+    <button class="settings-btn" id="settingsBtn">⚙️</button>
+    <script src="script.js"></script>
+  </body>
+</html>
