@@ -37,5 +37,5 @@ Saving links in bookmarks becomes messy and inconvenient, especially for frequen
 
 1. Download or clone this repo:
    ```bash
-   git clone https://github.com/yourusername/unlimited-shortcuts-extension.git
+   git clone https://github.com/your-username/Unlimited-Shortcut-Chrome-Extention.git
    ```
