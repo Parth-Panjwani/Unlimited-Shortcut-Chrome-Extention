@@ -42,24 +42,59 @@ function renderShortcuts() {
 
     div.innerHTML = `
       <div class="shortcut-actions">
-        <span class="menu" onclick="toggleDropdown(event, ${index})">⋮</span>
+        <span class="menu" data-index="${index}">⋮</span>
         <div class="menu-dropdown" id="dropdown-${index}">
-          <button onclick="editShortcut(${index})">Edit</button>
-          <button onclick="deleteShortcut(${index})">Delete</button>
+          <button data-action="edit" data-index="${index}">Edit</button>
+          <button data-action="delete" data-index="${index}">Delete</button>
         </div>
       </div>
-      <div onclick="window.location.href='${shortcut.url}'">
-        <img src="${logo}" alt="${shortcut.name}" onerror="this.src='https://www.google.com/s2/favicons?sz=64&domain=google.com'">
+      <div class="shortcut-link" data-url="${shortcut.url}">
+        <img src="${logo}" alt="${shortcut.name}" class="shortcut-img">
         <span>${shortcut.name}</span>
       </div>
     `;
     shortcutGrid.appendChild(div);
+
+    // Add error handling for images
+    div.querySelector(".shortcut-img").addEventListener("error", () => {
+      div.querySelector(".shortcut-img").src = "https://www.google.com/s2/favicons?sz=64&domain=google.com";
+    });
   });
 
   const addBtn = document.createElement("div");
   addBtn.className = "shortcut";
-  addBtn.innerHTML = `<button class="add-btn" onclick="openModal()">+</button>`;
+  addBtn.innerHTML = `<button class="add-btn">+</button>`;
   shortcutGrid.appendChild(addBtn);
+
+  // Attach event listeners after rendering
+  document.querySelectorAll(".menu").forEach(menu => {
+    menu.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const index = parseInt(e.currentTarget.getAttribute("data-index"));
+      toggleDropdown(e, index);
+    });
+  });
+
+  document.querySelectorAll(".menu-dropdown button").forEach(button => {
+    button.addEventListener("click", (e) => {
+      const index = parseInt(e.currentTarget.getAttribute("data-index"));
+      const action = e.currentTarget.getAttribute("data-action");
+      if (action === "edit") {
+        editShortcut(index);
+      } else if (action === "delete") {
+        deleteShortcut(index);
+      }
+    });
+  });
+
+  document.querySelectorAll(".shortcut-link").forEach(link => {
+    link.addEventListener("click", () => {
+      const url = link.getAttribute("data-url");
+      window.location.href = url;
+    });
+  });
+
+  document.querySelector(".add-btn").addEventListener("click", openModal);
 }
 
 function openModal() {
