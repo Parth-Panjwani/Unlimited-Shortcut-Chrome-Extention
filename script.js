@@ -35,9 +35,11 @@ function renderShortcuts() {
     let logo = shortcut.image;
     try {
       const domain = new URL(shortcut.url).hostname;
-      logo = logo || `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+      // Changed to Icon Horse API
+      logo = logo || `https://icon.horse/icon/${domain}`; 
     } catch {
-      logo = "https://www.google.com/s2/favicons?sz=64&domain=google.com";
+      // Fallback to a generic icon if URL is invalid
+      logo = "https://icon.horse/icon/google.com"; 
     }
 
     div.innerHTML = `
@@ -55,9 +57,9 @@ function renderShortcuts() {
     `;
     shortcutGrid.appendChild(div);
 
-    // Add error handling for images
+    // Add error handling for images (Icon Horse provides fallbacks, but this is good practice)
     div.querySelector(".shortcut-img").addEventListener("error", () => {
-      div.querySelector(".shortcut-img").src = "https://www.google.com/s2/favicons?sz=64&domain=google.com";
+      div.querySelector(".shortcut-img").src = "https://icon.horse/icon/google.com";
     });
   });
 
@@ -154,12 +156,13 @@ saveBtn.onclick = () => {
     url = "https://" + url;
   }
 
+  // If no custom image is provided, generate one using Icon Horse
   if (!image) {
     try {
       const domain = new URL(url).hostname;
-      image = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+      image = `https://icon.horse/icon/${domain}`;
     } catch {
-      image = "https://www.google.com/s2/favicons?sz=64&domain=google.com";
+      image = "https://icon.horse/icon/google.com"; // Fallback for invalid URL
     }
   }
 
